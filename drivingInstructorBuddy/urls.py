@@ -3,5 +3,5 @@ from rest_framework.routers import SimpleRouter
 from .viewsets import NoteViewSet
 
 router = SimpleRouter()
-router.register('notes', NoteViewSet, basename="notes")
+router.register('drivingInstructorBuddy', NoteViewSet, basename="notes")
 urlpatterns = router.urls
