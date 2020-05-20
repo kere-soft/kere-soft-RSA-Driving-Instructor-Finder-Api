@@ -1,5 +1,8 @@
 from django.apps import AppConfig
 
 
-class NotesConfig(AppConfig):
-    name = 'notes'
+class DrivingInstructorBuddy(AppConfig):
+    name = 'drivingInstructorBuddy'
+
+    def ready(self):
+        import drivingInstructorBuddy.signals

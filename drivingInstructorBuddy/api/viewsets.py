@@ -12,6 +12,7 @@ User = get_user_model()
 @decorators.permission_classes([permissions.AllowAny])
 @atomic
 def registration(request):
+    print(request.data)
     serializer = UserCreateSerializer(data=request.data)
     if not serializer.is_valid():
         return response.Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
