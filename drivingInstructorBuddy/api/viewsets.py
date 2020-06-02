@@ -1,9 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.db.transaction import atomic
-from rest_framework import response, decorators, permissions, status
+from rest_framework import response, decorators, permissions, status, viewsets
 from .serializers import UserSerializer, RegistrationSerializer, UserVerifySerializer, \
-    CustomTokenTokenObtainPairSerializer
+    CustomTokenTokenObtainPairSerializer, InstructorSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+
+from ..models import Instructor
 
 User = get_user_model()
 
@@ -33,3 +35,11 @@ def verify_user(request):
     user = serializer.update(User.objects.get(pk=request.data['id']), serializer.validated_data)
     user_data = UserSerializer(user).data
     return response.Response(user_data, status.HTTP_200_OK)
+
+
+class InstructorViewSet(viewsets.ModelViewSet):
+    serializer_class = InstructorSerializer
+    queryset = Instructor.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        return response.Response(InstructorSerializer(self.queryset, many=True).data, status.HTTP_200_OK)

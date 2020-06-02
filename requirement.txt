@@ -3,3 +3,4 @@ django-rest-framework
 django-cors-headers
 djangorestframework_simplejwt
 factory_boy
+django-extensions

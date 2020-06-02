@@ -14,13 +14,33 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class LearnerIsAUser(serializers.ModelSerializer):
+    profile = UserProfileSerializer()
+
+    class Meta:
+        model = User
+        exclude = ['password', 'verification_code', 'is_superuser', 'is_active']
+
+
 class LearnerSerializer(serializers.ModelSerializer):
+    user = LearnerIsAUser()
+
     class Meta:
         model = Learner
         fields = "__all__"
 
 
+class InstructorIsAUser(serializers.ModelSerializer):
+    profile = UserProfileSerializer()
+
+    class Meta:
+        model = User
+        exclude = ['password', 'verification_code', 'is_superuser', 'is_active']
+
+
 class InstructorSerializer(serializers.ModelSerializer):
+    user = InstructorIsAUser()
+
     class Meta:
         model = Instructor
         fields = "__all__"
