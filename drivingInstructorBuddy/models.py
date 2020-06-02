@@ -22,9 +22,6 @@ class UserManager(BaseUserManager):
 
         user.set_password(password)
 
-        if extra_fields['name'] is not None:
-            user._name = extra_fields['name']
-
         user.save(using=self._db)
         return user
 
@@ -56,16 +53,23 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
 
-class Note(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
-    content = models.TextField()
+class Instructor(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    recommendations = models.IntegerField(default=0, null=False, blank=False)
+    about = models.CharField(max_length=512, null=True, blank=True)
 
-    def __str__(self):
-        return self.title
+
+class Learner(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 
 class Profile(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=128)
     user = models.OneToOneField(User, on_delete=models.CASCADE,)
+    name = models.CharField(max_length=128, blank=False, null=False)
+    avatar = models.CharField(max_length=256, null=True, blank=True)
+    city = models.CharField(max_length=128, null=True, blank=True)
+    county = models.CharField(max_length=128, null=True, blank=True)
+

@@ -2,6 +2,10 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib import admin
-from .models import Note
+from .models import User, Profile, Instructor, Learner
 
-admin.site.register(Note)
+admin.site.register(User)
+admin.site.register(Profile)
+admin.site.register(Instructor)
+admin.site.register(Learner)
+

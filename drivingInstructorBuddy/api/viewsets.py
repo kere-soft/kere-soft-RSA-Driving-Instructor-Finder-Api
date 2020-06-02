@@ -1,21 +1,22 @@
 from django.contrib.auth import get_user_model
 from django.db.transaction import atomic
 from rest_framework import response, decorators, permissions, status
-from .serializers import UserSerializer, UserCreateSerializer, UserVerifySerializer, CustomTokenTokenObtainPairSerializer
+from .serializers import UserSerializer, RegistrationSerializer, UserVerifySerializer, \
+    CustomTokenTokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 User = get_user_model()
 
 
-
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenTokenObtainPairSerializer
+
 
 @decorators.api_view(["POST"])
 @decorators.permission_classes([permissions.AllowAny])
 @atomic
 def registration(request):
-    serializer = UserCreateSerializer(data=request.data)
+    serializer = RegistrationSerializer(data=request.data)
     if not serializer.is_valid():
         return response.Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
     user = serializer.save()
