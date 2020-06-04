@@ -1,5 +1,6 @@
 import random
-from factory import DjangoModelFactory, lazy_attribute, RelatedFactory
+import datetime
+from factory import DjangoModelFactory, lazy_attribute, RelatedFactory, SubFactory, Iterator
 from .models import *
 from faker import Faker
 from faker.providers import BaseProvider
@@ -36,11 +37,34 @@ class AvatarProvider(BaseProvider):
         return random.choice(avatars)
 
 
+class InstructorRatingProvider(BaseProvider):
+    def rating(self):
+        return random.randint(0, 10) * .5
+
+
+class TimeSlotProvider(BaseProvider):
+    _startTime = datetime.time(8, 00)
+    _endTime = datetime.time(14, 00)
+
+    def time_slot(self):
+        t = self._startTime
+        while t <= self._endTime:
+            yield t.strftime('%H:%M')
+            t = (datetime.datetime.combine(datetime.date.today(), t) +
+                 datetime.timedelta(minutes=30)).time()
+
+    def start_time(self):
+        time_slots = list(self.time_slot())
+        return random.choice(time_slots)
+
+
 faker = Faker()
 faker.add_provider(CityProvider)
 faker.add_provider(CountyProvider)
 faker.add_provider(AvatarProvider)
 faker.add_provider(VerificationCodeProvider)
+faker.add_provider(InstructorRatingProvider)
+faker.add_provider(TimeSlotProvider)
 
 
 class UserFactory(DjangoModelFactory):
@@ -64,6 +88,7 @@ class ProfileFactory(DjangoModelFactory):
     avatar = lazy_attribute(lambda x: faker.avatar())
     city = lazy_attribute(lambda x: faker.cities())
     county = lazy_attribute(lambda x: faker.counties())
+    phone = lazy_attribute(lambda x: faker.phone_number())
 
 
 class LearnerFactory(DjangoModelFactory):
@@ -80,3 +105,31 @@ class InstructorFactory(DjangoModelFactory):
     user = RelatedFactory(UserFactory)
     recommendations = lazy_attribute(lambda x: random.randint(0, 50))
     about = lazy_attribute(lambda x: faker.text())
+    rating = lazy_attribute(lambda x: faker.rating())
+
+
+class InstructorAvailabilityFactory(DjangoModelFactory):
+    class Meta:
+        model = InstructorAvailability
+
+    instructor = Iterator(Instructor.objects.all())
+    date = lazy_attribute(lambda x: faker.date_between_dates(
+        datetime.date(2020, 6, 1),
+        datetime.date(2020, 6, 30)
+    ))
+    startTime = lazy_attribute(lambda x: faker.start_time())
+    endTime = lazy_attribute(lambda x: faker.start_time())
+
+
+class Bookings(DjangoModelFactory):
+    class Meta:
+        model = Bookings
+
+    instructor = Iterator(Instructor.objects.all())
+    learner = Iterator(Learner.objects.all())
+    date = lazy_attribute(lambda x: faker.date_between_dates(
+        datetime.date(2020, 6, 1),
+        datetime.date(2020, 6, 30)
+    ))
+    startTime = lazy_attribute(lambda x: faker.start_time())
+    endTime = lazy_attribute(lambda x: faker.start_time())

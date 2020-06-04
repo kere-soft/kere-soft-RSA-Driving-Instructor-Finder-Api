@@ -57,6 +57,7 @@ class Instructor(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     recommendations = models.IntegerField(default=0, null=False, blank=False)
+    rating = models.FloatField(default=0.0, null=True, blank=True)
     about = models.CharField(max_length=512, null=True, blank=True)
 
 
@@ -67,9 +68,30 @@ class Learner(models.Model):
 
 class Profile(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE,)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, )
     name = models.CharField(max_length=128, blank=False, null=False)
     avatar = models.CharField(max_length=256, null=True, blank=True)
     city = models.CharField(max_length=128, null=True, blank=True)
     county = models.CharField(max_length=128, null=True, blank=True)
+    phone = models.CharField(max_length=50,null=True, blank=True)
 
+
+class InstructorAvailability(models.Model):
+    id = models.AutoField(primary_key=True)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    date = models.DateField(blank=False, null=False)
+    startTime = models.TimeField(blank=False, null=False)
+    endTime = models.TimeField(blank=False, null=False)
+    created_at = models.DateTimeField(editable=False, auto_now_add=True)
+    updated_at = models.DateTimeField(editable=False, auto_now_add=True)
+
+
+class Bookings(models.Model):
+    id = models.AutoField(primary_key=True)
+    learner = models.ForeignKey(Learner, on_delete=models.CASCADE)
+    instructor = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    date = models.DateField()
+    startTime = models.TimeField()
+    endTime = models.TimeField()
+    created_at = models.DateTimeField(editable=False, auto_now_add=True)
+    updated_at = models.DateTimeField(editable=False, auto_now_add=True)

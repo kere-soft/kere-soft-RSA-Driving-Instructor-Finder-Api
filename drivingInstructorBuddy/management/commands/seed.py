@@ -9,6 +9,7 @@ class Command(BaseCommand):
         parser.add_argument('total', type=int, help='Indicates the total number of users to be created')
 
     def handle(self, *args, **options):
+        # Let's seed user, profile, instructor, lerner first
         if options['total']:
             user = options['total']
             try:
@@ -28,6 +29,10 @@ class Command(BaseCommand):
                             learner = LearnerFactory.build()
                             learner.user = user
                             learner.save()
+                # Let's populate the availability of instructor and bookings
+                for _ in range(2 * options['total']):
+                    InstructorAvailabilityFactory.create()
+                    Bookings.create()
             except Exception as e:
                 self.stdout.write("Error occurred with message " + str(e))
         else:
